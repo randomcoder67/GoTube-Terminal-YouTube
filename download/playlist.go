@@ -200,7 +200,10 @@ func GetPlaylistContinuation(videosHolder youtube.VideoHolder, continuationToken
 			// Views
 			var views string
 			var vidType string
-			if videoJSON.VideoInfo.Runs[1].Text == " watching" {
+			if len(videoJSON.VideoInfo.Runs) == 0 {
+				views = "0"
+				vidType = "Livestream"
+			} else if videoJSON.VideoInfo.Runs[1].Text == " watching" {
 				views = videoJSON.VideoInfo.Runs[0].Text
 				vidType = "Livestream"
 			} else {
