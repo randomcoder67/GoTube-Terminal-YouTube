@@ -385,6 +385,63 @@ type LibraryJSON struct {
 											Content struct {
 												HorizontalListRenderer struct {
 													Items []struct {
+														LockupViewModel struct {
+															ContentImage struct {
+																CollectionThumbnailViewModel struct {
+																	PrimaryThumbnail struct {
+																		ThumbnailViewModel struct {
+																			Image struct {
+																				Sources []struct {
+																					URL string `json:"url"`
+																				} `json:"sources"`
+																			} `json:"image"`
+																			Overlays []struct {
+																				ThumbnailOverlayBadgeViewModel struct {
+																					ThumbnailBadges []struct {
+																						ThumbnailBadgeViewModel struct {
+																							Text string `json:"text"`
+																						} `json:"thumbnailBadgeViewModel"`
+																					} `json:"thumbnailBadges"`
+																				} `json:"thumbnailOverlayBadgeViewModel"`
+																			} `json:"overlays"`
+																		} `json:"thumbnailViewModel"`
+																	} `json:"primaryThumbnail"`
+																} `json:"collectionThumbnailViewModel"`
+															} `json:"contentImage"`
+															Metadata struct {
+																LockupMetadataViewModel struct {
+																	Title struct {
+																		Content string `json:"content"`
+																	} `json:"title"`
+																	Metadata struct {
+																		ContentMetadataViewModel struct {
+																			MetadataRows []struct {
+																				MetadataParts []struct {
+																					Text struct {
+																						Content string `json:"content"`
+																						CommandRuns []struct {
+																							OnTap struct {
+																								InnertubeCommand struct {
+																									CommandMetadata struct {
+																										WebCommandMetadata struct {
+																											URL string
+																										} `json:"webCommandMetadata"`
+																									} `json:"commandMetadata"`
+																								} `json:"innertubeCommand"`
+																							} `json:"onTap"`
+																						} `json:"commandRuns"`
+																					}  `json:"text"`
+																				} `json:"metadataParts"`
+																			}  `json:"metadataRows"`
+																		}  `json:"contentMetadataViewModel"`
+																	} `json:"metadata"`
+																} `json:"lockupMetadataViewModel"`
+															} `json:"Metadata"`
+
+														} `json:"lockupViewModel"`
+
+
+														
 														GridVideoRenderer struct {
 															Thumbnail struct {
 																Thumbnails []struct {
@@ -505,6 +562,7 @@ type LibraryJSON struct {
 																} `json:"runs"`
 															} `json:"viewPlaylistText"`
 														} `json:"gridPlaylistRenderer,omitempty"`
+														
 													} `json:"items"`
 												} `json:"horizontalListRenderer,omitempty"`
 											} `json:"content"`

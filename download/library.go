@@ -12,6 +12,7 @@ import (
 )
 
 var _ = os.WriteFile
+var _ = strconv.Itoa
 
 func GetLibrary() youtube.VideoHolder {
 	config.LogEvent("Getting library")
@@ -40,11 +41,11 @@ func GetLibrary() youtube.VideoHolder {
 	text, _ := json.MarshalIndent(jsonA, "", "  ")
 	//os.WriteFile("processed.json", text, 0666)
 	config.FileDump("LibraryProcessed.json", string(text), false)
+	playlists := []youtube.Video{}
 	
 	contents := jsonA.Contents.TwoColumnBrowseResultsRenderer.Tabs[0]
 	contentsB := contents.TabRenderer.Content.SectionListRenderer.Contents
 	contentsA := contentsB[1].ItemSectionRenderer.Contents[0].ShelfRenderer.Content.HorizontalListRenderer.Items
-	playlists := []youtube.Video{}
 	
 	
 
@@ -93,28 +94,31 @@ func GetLibrary() youtube.VideoHolder {
 	
 	for _, x := range contentsA {
 
-		playlistJSON := x.GridPlaylistRenderer
-		if playlistJSON.Title.SimpleText != "" {
+		playlistJSON := x.LockupViewModel
+		if playlistJSON.Metadata.LockupMetadataViewModel.Title.Content != "" {
 
 			// Last Updated
 			var lastUpdated string = "Unknown"
-			if playlistJSON.PublishedTimeText.SimpleText != "" {
-				lastUpdated = playlistJSON.PublishedTimeText.SimpleText
-				if strings.Contains(lastUpdated, "yesterday") {
-					lastUpdated = "Yesterday"
-				} else if strings.Contains(lastUpdated, "today") {
-					lastUpdated = "Today"
-				} else if strings.Contains(lastUpdated, "days ago") {
-
-				} else if strings.Contains(lastUpdated, "months ago") {
-
-				} else if strings.Contains(lastUpdated, "years ago") {
-
+			lastUpdatedPos := playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows
+			for _, y := range lastUpdatedPos {
+				if strings.Contains(y.MetadataParts[0].Text.Content, "Updated") {
+					lastUpdated = strings.ReplaceAll(y.MetadataParts[0].Text.Content, "Updated ", "")
 				}
 			}
 
 			// Num Videos
 			var numVideos int = 0
+			var vids string = playlistJSON.ContentImage.CollectionThumbnailViewModel.PrimaryThumbnail.ThumbnailViewModel.Overlays[0].ThumbnailOverlayBadgeViewModel.ThumbnailBadges[0].ThumbnailBadgeViewModel.Text
+			vids = strings.ReplaceAll(vids, ",", "")
+			vids = strings.ReplaceAll(vids, "videos", "")
+			vids = strings.ReplaceAll(vids, "video", "")
+			vids = strings.ReplaceAll(vids, " ", "")
+			i, err := strconv.Atoi(vids)
+			if err == nil {
+				numVideos = i
+			}
+			youtube.Print(strconv.Itoa(numVideos))
+			/*
 			if playlistJSON.VideoCountText.Runs != nil {
 				var videosString string = playlistJSON.VideoCountText.Runs[0].Text
 				if videosString == "No videos" {
@@ -128,16 +132,26 @@ func GetLibrary() youtube.VideoHolder {
 					numVideos, err = strconv.Atoi(videosString)
 				}
 			}
+			*/
+
+			
 
 			var visibility string = "Unknown"
 
 			var author string = "Unknown"
+			for _, y := range playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows {
+				if y.MetadataParts[0].Text.Content != "Playlist" && y.MetadataParts[0].Text.Content != "View full playlist" && !strings.Contains(y.MetadataParts[0].Text.Content, "Updated") {
+					author = y.MetadataParts[0].Text.Content
+				}
+			}
+			/*
 			if playlistJSON.ShortBylineText.Runs[0].NavigationEndpoint.ClickTrackingParams != "" {
 				author = playlistJSON.ShortBylineText.Runs[0].Text
 				visibility = "Public"
 			} else {
 				visibility = playlistJSON.ShortBylineText.Runs[0].Text
 			}
+			*/
 			
 			number++
 
@@ -154,15 +168,23 @@ func GetLibrary() youtube.VideoHolder {
 				thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
 			}
 
+			var playlistID string
+			for _, y := range playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows {
+				if y.MetadataParts[0].Text.Content == "View full playlist" {
+					playlistID = y.MetadataParts[0].Text.CommandRuns[0].OnTap.InnertubeCommand.CommandMetadata.WebCommandMetadata.URL
+					playlistID = strings.ReplaceAll(playlistID, "/playlist?list=", "")
+				}
+			}
+
 			// Put it all together
 			playlist := youtube.Video{
-				Title:         playlistJSON.Title.SimpleText,
+				Title:         playlistJSON.Metadata.LockupMetadataViewModel.Title.Content,
 				LastUpdated:   lastUpdated,
 				NumVideos:     numVideos,
 				Channel:       author,
 				Visibility:    visibility,
-				Id:            playlistJSON.PlaylistID,
-				ThumbnailLink: playlistJSON.Thumbnail.Thumbnails[0].URL,
+				Id:            playlistID,
+				ThumbnailLink: playlistJSON.ContentImage.CollectionThumbnailViewModel.PrimaryThumbnail.ThumbnailViewModel.Image.Sources[0].URL,
 				ThumbnailFile: thumbnailFile,
 				Type:          typeA,
 			}
@@ -177,12 +199,13 @@ func GetLibrary() youtube.VideoHolder {
 			_ = <-doneChan
 		}
 	}
-
+	
 	holder := youtube.VideoHolder{
 		Videos:            playlists,
 		PageType:          youtube.LIBRARY,
 		ContinuationToken: "",
 	}
+	
 
 	return holder
 }
