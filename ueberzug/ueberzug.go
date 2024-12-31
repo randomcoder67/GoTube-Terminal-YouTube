@@ -32,7 +32,7 @@ func Print(str string) {
 }
 
 func MainUeberzug(commands chan CommandInfo) {
-	ueb := exec.Command("ueberzug", "layer", "--no-config")
+	ueb := exec.Command("ueberzug", "layer", "--no-cache")
 	stdin, err := ueb.StdinPipe()
 	if err != nil {
 		panic(err)
