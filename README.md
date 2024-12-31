@@ -85,6 +85,9 @@ Log into YouTube in Firefox. Ensure there is a `~/.mozilla/firefox/[something].d
 
 Once launched, the search box can be focused with `/` or `Tab`, and the grid can be focused with `Tab`. Navigation around the grid can be done with arrow keys or vim keys. PageUp/Down, Home and End also supported. `Ctrl-C`, `Esc` or `q` to quit. Other keyboard commands are show in the sidebar.  
 Commands can be entered in the search box, beginning with a `/`. These are also shown in the sidebar.
+### Wayland
+
+* Ueberzug doesn't work on Wayland, to get the thumbnails working on Wayland, you can use the Kitty terminal and set Ueberzug to use the Kitty protocol
 
 ## Future Features
 
