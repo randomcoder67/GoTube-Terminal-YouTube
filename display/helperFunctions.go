@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+	"gotube/config"
 )
 
 // This file is for helper functions which do not interact directly with tcell. For functions which do, seem drawHelpers.go for general tcell functions and thing related to the MainContent interface, and gridHelper.go for tcell functions specific to drawing/managing the grids
@@ -179,7 +180,12 @@ func longLength(numerical string) string {
 
 // Copies string to system clipboard, currently only supports X11, will add in Wayland support later (need to install it)
 func copyToClipboard(textToCopy string) {
-	cmd := exec.Command("xclip", "-selection", "c", "-i")
+	var cmd *exec.Cmd
+	if config.ActiveConfig.SessionType == "wayland" {
+		cmd = exec.Command("wl-copy")
+	} else {
+		cmd = exec.Command("xclip", "-selection", "c", "-i")
+	}
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
 		panic(err)
