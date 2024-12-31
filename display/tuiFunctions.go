@@ -155,7 +155,7 @@ func addToLibrary(screen tcell.Screen, playlistId string, playlistName string) {
 	} else {
 		drawStatusBar(screen, []string{"Error, could not add to library"})
 	}
-	screen.Sync()
+	screen.Show()
 }
 
 func removeFromLibrary(content MainContent) {
@@ -173,7 +173,7 @@ func removeFromLibrary(content MainContent) {
 	} else {
 		drawStatusBar(screen, []string{"Error, could not remove from library"})
 	}
-	screen.Sync()
+	screen.Show()
 }
 
 func createPlaylist(content MainContent) {
@@ -186,7 +186,7 @@ func createPlaylist(content MainContent) {
 	
 	// Get playlist name from user
 	drawStatusBar(screen, []string{"Enter new playlist name"})
-	screen.Sync()
+	screen.Show()
 	ret, data := FocusSearchBox(content, false, true)
 	var playlistName string = data[0]
 	// Cancel if the name is blank, or Escape pressed (restoring previous search box contents)
@@ -194,13 +194,13 @@ func createPlaylist(content MainContent) {
 		drawStatusBar(screen, []string{"Cancelling"})
 		currentSearchTerm = savedSearchTerm
 		cursorLoc = savedCursorLoc
-		screen.Sync()
+		screen.Show()
 		return
 	}
 	
 	// Get playlist visibility from user
 	drawStatusBar(screen, []string{"Select playlist visibility"})
-	screen.Sync()
+	screen.Show()
 	
 	visibilityOptions := []string{"Private", "Unlisted", "Public"}
 	var visibilityChoice string = selectionTUI(content, visibilityOptions, false)
@@ -240,7 +240,7 @@ func createPlaylist(content MainContent) {
 	// Restore previous search box contents
 	currentSearchTerm = savedSearchTerm
 	cursorLoc = savedCursorLoc
-	screen.Sync()
+	screen.Show()
 }
 
 func deletePlaylist(content MainContent) {
@@ -261,7 +261,7 @@ func deletePlaylist(content MainContent) {
 		drawStatusBar(screen, []string{"Cancelling"})
 		currentSearchTerm = savedSearchTerm
 		cursorLoc = savedCursorLoc
-		screen.Sync()
+		screen.Show()
 		return
 	}
 	
@@ -283,7 +283,7 @@ func deletePlaylist(content MainContent) {
 	// Restore previous search box contents
 	currentSearchTerm = savedSearchTerm
 	cursorLoc = savedCursorLoc
-	screen.Sync()
+	screen.Show()
 }
 
 func addToPlaylistOptions(content MainContent) {
@@ -306,7 +306,7 @@ func addToPlaylist(screen tcell.Screen, videoId, playlistId, playlistName string
 	} else {
 		drawStatusBar(screen, []string{"Error, could not add to playlist"})
 	}
-	screen.Sync()
+	screen.Show()
 }
 
 func removeFromPlaylist(content MainContent) {
@@ -325,7 +325,7 @@ func removeFromPlaylist(content MainContent) {
 	} else {
 		drawStatusBar(screen, []string{"Error, could not remove from playlist"})
 	}
-	screen.Sync()
+	screen.Show()
 }
 
 func copyLink(screen tcell.Screen, id string, startTime int, itemType int, timestamp bool) {
@@ -339,7 +339,7 @@ func copyLink(screen tcell.Screen, id string, startTime int, itemType int, times
 		copyToClipboard("https://www.youtube.com/playlist?list=" + id)
 	}
 	drawStatusBar(screen, []string{"Copied link to clipboard"})
-	screen.Sync()
+	screen.Show()
 }
 
 func getExtension(screen tcell.Screen, videosHolder youtube.VideoHolder) youtube.VideoHolder {

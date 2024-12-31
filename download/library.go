@@ -117,7 +117,7 @@ func GetLibrary() youtube.VideoHolder {
 			if err == nil {
 				numVideos = i
 			}
-			youtube.Print(strconv.Itoa(numVideos))
+			//youtube.Print(strconv.Itoa(numVideos))
 			/*
 			if playlistJSON.VideoCountText.Runs != nil {
 				var videosString string = playlistJSON.VideoCountText.Runs[0].Text

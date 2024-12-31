@@ -85,7 +85,7 @@ func FocusSearchBox(content MainContent, lock bool, returnString bool) (int, []s
 	screen := content.getScreen()
 	renderSearchBox(screen, true)
 	for {
-		screen.Sync()
+		screen.Show()
 		termWidth, termHeight = screen.Size()
 		ev := screen.PollEvent()
 		switch ev := ev.(type) {
@@ -143,7 +143,7 @@ func FocusSearchBox(content MainContent, lock bool, returnString bool) (int, []s
 					continue
 				}
 				screen.HideCursor()
-				screen.Sync()
+				screen.Show()
 				return youtube.NONE, []string{""}
 			}
 		}

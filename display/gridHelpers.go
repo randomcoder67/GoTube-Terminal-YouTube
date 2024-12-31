@@ -145,7 +145,7 @@ func drawGridVideos(screen tcell.Screen, videos []youtube.Video, curSel CurSelec
 			i++
 		}
 	}
-	screen.Sync()
+	//screen.Sync()
 	screen.Show()
 }
 
