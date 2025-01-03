@@ -390,8 +390,15 @@ func GetAddToPlaylist(videoID string) (map[string]string, []string) {
 	contents := infoJSON.Contents[0].AddToPlaylistRenderer.Playlists
 	for _, entry := range contents {
 		info := entry.PlaylistAddToOptionRenderer
-		playlistsSlice = append(playlistsSlice, info.Title.SimpleText)
-		playlistsMap[info.Title.SimpleText] = info.PlaylistID
+		playlistName := info.Title.SimpleText
+
+		// Check if the playlist already contains the target video (only works for single selected video)
+		if info.ContainsSelectedVideos  == "ALL" {
+			playlistName = "* " + playlistName
+		}
+		
+		playlistsSlice = append(playlistsSlice, playlistName)
+		playlistsMap[playlistName] = info.PlaylistID
 	}
 	
 	// Watch later should always be first on the list, then all the other playlist in order of most recently added to. Sometimes Watch later will be the second in the list, this code fixes that
