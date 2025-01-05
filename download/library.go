@@ -97,7 +97,12 @@ func GetLibrary() youtube.VideoHolder {
 		playlistJSON := x.LockupViewModel
 		if playlistJSON.Metadata.LockupMetadataViewModel.Title.Content != "" {
 
+			// Title
+
+			var title string = playlistJSON.Metadata.LockupMetadataViewModel.Title.Content
+			
 			// Last Updated
+
 			var lastUpdated string = "Unknown"
 			lastUpdatedPos := playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows
 			for _, y := range lastUpdatedPos {
@@ -107,6 +112,7 @@ func GetLibrary() youtube.VideoHolder {
 			}
 
 			// Num Videos
+			
 			var numVideos int = 0
 			var vids string = playlistJSON.ContentImage.CollectionThumbnailViewModel.PrimaryThumbnail.ThumbnailViewModel.Overlays[0].ThumbnailOverlayBadgeViewModel.ThumbnailBadges[0].ThumbnailBadgeViewModel.Text
 			vids = strings.ReplaceAll(vids, ",", "")
@@ -117,57 +123,38 @@ func GetLibrary() youtube.VideoHolder {
 			if err == nil {
 				numVideos = i
 			}
-			//youtube.Print(strconv.Itoa(numVideos))
-			/*
-			if playlistJSON.VideoCountText.Runs != nil {
-				var videosString string = playlistJSON.VideoCountText.Runs[0].Text
-				if videosString == "No videos" {
-					numVideos = 0
-				} else if videosString == "1 video" {
-					numVideos = 1
-				} else {
-					//Print(playlistJSON.Title.SimpleText + ": " + playlistJSON.VideoCountText.Runs[0].Text)
-					// Playlists with more than 999 videos will have a comma in the number (e.g. "1,120")
-					var videosString string = strings.ReplaceAll(playlistJSON.VideoCountText.Runs[0].Text, ",", "")
-					numVideos, err = strconv.Atoi(videosString)
-				}
-			}
-			*/
-
 			
+			// Channel Name
 
-			var visibility string = "Unknown"
+			var author string
 
-			var author string = "Unknown"
 			for _, y := range playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows {
 				if y.MetadataParts[0].Text.Content != "Playlist" && y.MetadataParts[0].Text.Content != "View full playlist" && !strings.Contains(y.MetadataParts[0].Text.Content, "Updated") {
 					author = y.MetadataParts[0].Text.Content
+					//visibility = "Public"
+					//typeA = youtube.OTHER_PLAYLIST
 				}
 			}
-			/*
-			if playlistJSON.ShortBylineText.Runs[0].NavigationEndpoint.ClickTrackingParams != "" {
-				author = playlistJSON.ShortBylineText.Runs[0].Text
-				visibility = "Public"
-			} else {
-				visibility = playlistJSON.ShortBylineText.Runs[0].Text
-			}
-			*/
 			
-			number++
-
+			// Visibility and Type
+			
+			var visibility string = "Unknown"
 			var typeA int = youtube.OTHER_PLAYLIST
-			if author == "Unknown" {
-				typeA = youtube.MY_PLAYLIST
+
+			for _, y := range playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows {
+				if len(y.MetadataParts) == 2 && y.MetadataParts[1].Text.Content == "Playlist" {
+					if len(y.MetadataParts[1].Text.CommandRuns) == 0 {
+						visibility = y.MetadataParts[0].Text.Content
+						typeA = youtube.MY_PLAYLIST
+					}
+				}
+			}
+			if typeA == youtube.OTHER_PLAYLIST {
+				visibility = "Public"
 			}
 			
-			var thumbnailFile string
-			if numVideos > 0 {
-				thumbnailFile = youtube.HOME_DIR + ThumbnailDir + strconv.Itoa(number) + ".png"
-				numberOfThumbnails++
-			} else {
-				thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
-			}
-
+			// Playlist ID
+			
 			var playlistID string
 			for _, y := range playlistJSON.Metadata.LockupMetadataViewModel.Metadata.ContentMetadataViewModel.MetadataRows {
 				if y.MetadataParts[0].Text.Content == "View full playlist" {
@@ -176,15 +163,32 @@ func GetLibrary() youtube.VideoHolder {
 				}
 			}
 
+			// Thumbnail Link
+
+			var thumbnailLink string = playlistJSON.ContentImage.CollectionThumbnailViewModel.PrimaryThumbnail.ThumbnailViewModel.Image.Sources[0].URL
+
+			// Thumbnail File Name
+
+			var thumbnailFile string
+			if numVideos > 0 {
+				thumbnailFile = youtube.HOME_DIR + ThumbnailDir + strconv.Itoa(number) + ".png"
+				numberOfThumbnails++
+			} else {
+				thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
+			}
+
+
+			number++
+
 			// Put it all together
 			playlist := youtube.Video{
-				Title:         playlistJSON.Metadata.LockupMetadataViewModel.Title.Content,
+				Title:         title,
 				LastUpdated:   lastUpdated,
 				NumVideos:     numVideos,
 				Channel:       author,
 				Visibility:    visibility,
 				Id:            playlistID,
-				ThumbnailLink: playlistJSON.ContentImage.CollectionThumbnailViewModel.PrimaryThumbnail.ThumbnailViewModel.Image.Sources[0].URL,
+				ThumbnailLink: thumbnailLink,
 				ThumbnailFile: thumbnailFile,
 				Type:          typeA,
 			}

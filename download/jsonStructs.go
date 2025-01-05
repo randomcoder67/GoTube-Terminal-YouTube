@@ -587,6 +587,77 @@ type SearchJSON struct {
 						ItemSectionRenderer struct {
 							Contents []struct {
 								// Playlist
+								LockupViewModel struct {
+									ContentImage struct {
+										CollectionThumbnailViewModel struct {
+											PrimaryThumbnail struct {
+												ThumbnailViewModel struct {
+													Image struct {
+														Sources []struct {
+															URL    string `json:"url"`
+															Width  int    `json:"width"`
+															Height int    `json:"height"`
+														} `json:"sources"`
+													} `json:"image"`
+													Overlays []struct {
+														ThumbnailOverlayBadgeViewModel struct {
+															ThumbnailBadges []struct {
+																ThumbnailBadgeViewModel struct {
+																	Icon struct {
+																		Sources []struct {
+																			ClientResource struct {
+																				ImageName string `json:"imageName"`
+																			} `json:"clientResource"`
+																		} `json:"sources"`
+																	} `json:"icon"`
+																	Text       string `json:"text"`
+																	BadgeStyle string `json:"badgeStyle"`
+																} `json:"thumbnailBadgeViewModel"`
+															} `json:"thumbnailBadges"`
+															Position string `json:"position"`
+														} `json:"thumbnailOverlayBadgeViewModel"`
+													} `json:"overlays"`
+												} `json:"thumbnailViewModel"`
+											} `json:"primaryThumbnail"`
+										} `json:"collectionThumbnailViewModel"`
+									} `json:"contentImage"`
+									Metadata struct {
+										LockupMetadataViewModel struct {
+											Title struct {
+												Content string `json:"content"`
+											} `json:"title"`
+											Metadata struct {
+												ContentMetadataViewModel struct {
+													MetadataRows []struct {
+														MetadataParts []struct {
+															Text struct {
+																Content     string `json:"content"`
+																CommandRuns []struct {
+																	StartIndex int `json:"startIndex"`
+																	Length     int `json:"length"`
+																	OnTap      struct {
+																		InnertubeCommand struct {
+																			ClickTrackingParams string `json:"clickTrackingParams"`
+																			CommandMetadata     struct {
+																				WebCommandMetadata struct {
+																					URL string `json:"url"`
+																				} `json:"webCommandMetadata"`
+																			} `json:"commandMetadata"`
+																		} `json:"innertubeCommand"`
+																	} `json:"onTap"`
+																} `json:"commandRuns"`
+															} `json:"text"`
+														} `json:"metadataParts"`
+													} `json:"metadataRows"`
+													Delimiter string `json:"delimiter"`
+												} `json:"contentMetadataViewModel"`
+											} `json:"metadata"`
+										} `json:"lockupMetadataViewModel"`
+									} `json:"metadata"`
+								} `json:"lockupViewModel"`
+
+
+								/*
 								PlaylistRenderer struct {
 									PlaylistID string `json:"playlistId"`
 									Thumbnails []struct {
@@ -638,6 +709,7 @@ type SearchJSON struct {
 										} `json:"runs"`
 									} `json:"longBylineText"`
 								} `json:"playlistRenderer,omitempty"`
+								*/
 								// Video
 								VideoRenderer struct {
 									VideoID   string `json:"videoId"`
