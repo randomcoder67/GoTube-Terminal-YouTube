@@ -19,11 +19,13 @@ type ConfigOpts struct {
 	Thumbnails     bool // Option to disable thumbnails for bad internet connections
 	HideWatchLater  bool // Whether to hide Watch Later from playlists view
 	HideLikedVideos bool // Whether to hide Liked Videos from playlists view
+	PlaylistsToHide []string // Other playlists to hide (by name)
 }
 
 type ConfigFile struct {
 	HideWatchLater  bool `json:"hideWatchLater"`
 	HideLikedVideos bool `json:"hideLikedVideos"`
+	PlaylistsToHide []string `json:"playlistsToHide"`
 }
 
 var ActiveConfig ConfigOpts
@@ -64,6 +66,7 @@ func InitConfig(log bool, dumpJSON bool, thumbnails bool, browserCookies string)
 		Thumbnails:     thumbnails,
 		HideWatchLater: configFile.HideWatchLater,
 		HideLikedVideos: configFile.HideLikedVideos,
+		PlaylistsToHide: configFile.PlaylistsToHide,
 	}
 
 	fmt.Fprintf(logFileD, "Config Options: %+v\n", ActiveConfig)

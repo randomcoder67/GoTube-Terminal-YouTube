@@ -35,7 +35,11 @@ func MainREPL(request int, data []string) int {
 	for {
 		if request == youtube.GET_LIBRARY { // If the data is a bunch of playlists
 			display.StartLoading(screen)
-			currentVideos = download.GetLibrary()
+			if len(data) > 0 && data[0] == "includeHidden" {
+				currentVideos = download.GetLibrary(true)
+			} else {
+				currentVideos = download.GetLibrary(false)
+			}
 			display.EndLoading()
 			request, data, curSel = display.TUIWithVideos(screen, currentVideos, display.CurSelection{}, uebChan)
 		} else if request == youtube.VIDEO_PAGE {
@@ -149,7 +153,7 @@ func fork(args []string) {
 	case "--cookies":
 		network.GetCookies()
 	case "--testing":
-		download.GetLibrary()
+		download.GetLibrary(false)
 	case "--dump-json":
 		config.OpenLogFile()
 		config.InitConfig(false, false, false, "firefox")
@@ -313,7 +317,7 @@ func main() {
 	//display.TUI()
 	// This is all testing stuff, will be gone when program is ready
 	if len(os.Args) > 1 && os.Args[1] == "-play" {
-		download.GetLibrary()
+		download.GetLibrary(false)
 	} else if len(os.Args) > 1 && os.Args[1] == "-ha" {
 		download.GetHistory()
 	} else if len(os.Args) > 1 && os.Args[1] == "-d" {

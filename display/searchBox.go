@@ -166,6 +166,8 @@ func parseCommand(command string) (int, []string) {
 		return youtube.GET_LIKED, thing
 	case "/p", "/P":
 		return youtube.GET_LIBRARY, thing
+	case "/pa", "/PA":
+		return youtube.GET_LIBRARY, []string{"includeHidden"}
 	//case "/help":
 		//return SHOW_HELP, ""
 	case "/q", "/Q", "/quit", "/QUIT", "/exit", "/EXIT":

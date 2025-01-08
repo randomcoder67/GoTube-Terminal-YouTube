@@ -14,7 +14,7 @@ import (
 var _ = os.WriteFile
 var _ = strconv.Itoa
 
-func GetLibrary() youtube.VideoHolder {
+func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	config.LogEvent("Getting library")
 	// Get JSON text from the HTML
 	var jsonText string
@@ -60,7 +60,7 @@ func GetLibrary() youtube.VideoHolder {
 	watchLater := contentsB[2].ItemSectionRenderer.Contents[0].ShelfRenderer
 	
 	// Don't add Watch Later if it's disabled in config
-	if !config.ActiveConfig.HideWatchLater {
+	if includeHidden || !config.ActiveConfig.HideWatchLater {
 		if watchLater.Title.Runs[0].Text == "Watch Later" {
 	
 			numVideos, err := strconv.Atoi(watchLater.TitleAnnotation.SimpleText)
@@ -104,6 +104,16 @@ func GetLibrary() youtube.VideoHolder {
 			// Title
 
 			var title string = playlistJSON.Metadata.LockupMetadataViewModel.Title.Content
+			var inHidden bool = false
+			for _, item := range config.ActiveConfig.PlaylistsToHide {
+				if item == title {
+					inHidden = true
+				}
+			}
+
+			if !includeHidden && inHidden {
+				continue
+			}
 			
 			// Last Updated
 
@@ -168,7 +178,7 @@ func GetLibrary() youtube.VideoHolder {
 			}
 			
 			// Don't add Liked Videos if it's disabled in config
-			if config.ActiveConfig.HideLikedVideos && playlistID == "LL" {
+			if !includeHidden && config.ActiveConfig.HideLikedVideos && playlistID == "LL" {
 				continue
 			}
 
