@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"encoding/json"
 	"strings"
 )
 
@@ -16,11 +17,42 @@ type ConfigOpts struct {
 	BrowserEnv     string // The current $BROWSER environmental variable
 	BrowserCookies string // The current $BROWSER environmental variable
 	Thumbnails     bool // Option to disable thumbnails for bad internet connections
+	HideWatchLater  bool // Whether to hide Watch Later from playlists view
+	HideLikedVideos bool // Whether to hide Liked Videos from playlists view
+}
+
+type ConfigFile struct {
+	HideWatchLater  bool `json:"hideWatchLater"`
+	HideLikedVideos bool `json:"hideLikedVideos"`
 }
 
 var ActiveConfig ConfigOpts
 
+func readConfigFile() ConfigFile {
+	var configFile ConfigFile
+	var err error
+	configFileLocation := os.Getenv("XDG_CONFIG_HOME")
+	if configFileLocation == "" {
+		configFileLocation, err = os.UserHomeDir()
+		if err != nil {
+			return configFile
+		}
+		configFileLocation += "/.config"
+	}
+	configFileLocation += "/gotube/config.json"
+
+	dat, err := os.ReadFile(configFileLocation)
+	if err != nil {
+		return configFile
+	}
+
+	json.Unmarshal(dat, &configFile)
+	return configFile
+}
+
 func InitConfig(log bool, dumpJSON bool, thumbnails bool, browserCookies string) {
+	configFile := readConfigFile()
+
 	ActiveConfig = ConfigOpts{
 		Log:            log,
 		DumpJSON:       dumpJSON,
@@ -30,6 +62,8 @@ func InitConfig(log bool, dumpJSON bool, thumbnails bool, browserCookies string)
 		BrowserEnv:     os.Getenv("BROWSER"),
 		BrowserCookies: browserCookies,
 		Thumbnails:     thumbnails,
+		HideWatchLater: configFile.HideWatchLater,
+		HideLikedVideos: configFile.HideLikedVideos,
 	}
 
 	fmt.Fprintf(logFileD, "Config Options: %+v\n", ActiveConfig)

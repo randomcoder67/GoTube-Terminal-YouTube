@@ -56,41 +56,45 @@ func GetLibrary() youtube.VideoHolder {
 	var numberOfThumbnails int = 0
 	
 	
+
 	watchLater := contentsB[2].ItemSectionRenderer.Contents[0].ShelfRenderer
-		
-	if watchLater.Title.Runs[0].Text == "Watch Later" {
 	
-		numVideos, err := strconv.Atoi(watchLater.TitleAnnotation.SimpleText)
-		if err != nil {
-			panic(err)
+	// Don't add Watch Later if it's disabled in config
+	if !config.ActiveConfig.HideWatchLater {
+		if watchLater.Title.Runs[0].Text == "Watch Later" {
+	
+			numVideos, err := strconv.Atoi(watchLater.TitleAnnotation.SimpleText)
+			if err != nil {
+				panic(err)
+			}
+			
+			var thumbnailFile string
+			if numVideos > 0 {
+				thumbnailFile = youtube.HOME_DIR + ThumbnailDir + "wl.png"
+				numberOfThumbnails++
+			} else {
+				thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
+			}
+			
+			playlist := youtube.Video{
+				Title:         "Watch Later",
+				LastUpdated:   "Unknown",
+				NumVideos:     numVideos,
+				Channel:       "Unknown",
+				Visibility:    "Private",
+				Id:            "WL",
+				ThumbnailLink: watchLater.Content.HorizontalListRenderer.Items[0].GridVideoRenderer.Thumbnail.Thumbnails[0].URL,
+				ThumbnailFile: thumbnailFile,
+				Type:          youtube.OTHER_PLAYLIST,
+			}
+			
+			if numVideos > 0 && config.ActiveConfig.Thumbnails {
+				go network.DownloadThumbnail(playlist.ThumbnailLink, playlist.ThumbnailFile, false, doneChan, false)
+			}
+			playlists = append(playlists, playlist)
 		}
-		
-		var thumbnailFile string
-		if numVideos > 0 {
-			thumbnailFile = youtube.HOME_DIR + ThumbnailDir + "wl.png"
-			numberOfThumbnails++
-		} else {
-			thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
-		}
-		
-		playlist := youtube.Video{
-			Title:         "Watch Later",
-			LastUpdated:   "Unknown",
-			NumVideos:     numVideos,
-			Channel:       "Unknown",
-			Visibility:    "Private",
-			Id:            "WL",
-			ThumbnailLink: watchLater.Content.HorizontalListRenderer.Items[0].GridVideoRenderer.Thumbnail.Thumbnails[0].URL,
-			ThumbnailFile: thumbnailFile,
-			Type:          youtube.OTHER_PLAYLIST,
-		}
-		
-		if numVideos > 0 && config.ActiveConfig.Thumbnails {
-			go network.DownloadThumbnail(playlist.ThumbnailLink, playlist.ThumbnailFile, false, doneChan, false)
-		}
-		playlists = append(playlists, playlist)
 	}
-	
+
 	
 	for _, x := range contentsA {
 
@@ -161,6 +165,11 @@ func GetLibrary() youtube.VideoHolder {
 					playlistID = y.MetadataParts[0].Text.CommandRuns[0].OnTap.InnertubeCommand.CommandMetadata.WebCommandMetadata.URL
 					playlistID = strings.ReplaceAll(playlistID, "/playlist?list=", "")
 				}
+			}
+			
+			// Don't add Liked Videos if it's disabled in config
+			if config.ActiveConfig.HideLikedVideos && playlistID == "LL" {
+				continue
 			}
 
 			// Thumbnail Link
