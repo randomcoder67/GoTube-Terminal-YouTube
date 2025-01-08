@@ -34,14 +34,13 @@ A YouTube client in the terminal with thumbnails. Allows displaying images in an
 
 #### Video Playing
 
-* Play videos with [mpv](https://github.com/mpv-player/mpv) - much faster loading than default
+* Play videos with [mpv](https://github.com/mpv-player/mpv)
 * Format options (current options: 480p, 720p, 1080p, 1440p, 2160p)
-* Resume video from time in history
 * Includes YouTube chapters in mpv
 
 #### Video Management
 
-* Add and remove videos from your playlists (including watch later)
+* Add and remove videos from your playlists (including Watch Later)
 * Saves watch time to history
 * Create and delete playlists
 
@@ -49,6 +48,12 @@ A YouTube client in the terminal with thumbnails. Allows displaying images in an
 
 * Currently in "Beta" state, features are present and working but may be buggy
 * UI subject to change (i.e. some parts still look ugly and I may think of a better idea)
+
+### Update (January 2025)
+
+I remade my GitHub account to change the email address, so the original repo was deleted. I just started the releases from 0 again.  
+Also I have changed the "scope" of the project a bit. I now plan on using yt-dlp for video playback. Originally I had coded into GoTube the ability to get the direct URL from a YouTube video, but this broke, and maintaining this isn't something I can guarantee. yt-dlp is a bit slower, but it will be more reliable.  
+This also means the exact watch time won't be saved back to YouTube, only that the video was watched. I would like to fix this in the future.
 
 ## Installation
 
@@ -62,12 +67,12 @@ A YouTube client in the terminal with thumbnails. Allows displaying images in an
 
 ### Install
 
-`git clone https://github.com/randomcoder67/GoTube-YouTube-Client.git`  
-`cd GoTube-YouTube-Client`  
+`git clone https://github.com/randomcoder67/GoTube-Terminal-YouTube.git`  
+`cd GoTube-Terminal-YouTube`  
 `make`  
 `make install`  
 
-Log into YouTube in Firefox. Ensure there is a `~/.mozilla/firefox/[something].default-release/` directory. This should be the default save location for the cookies file when Firefox is insatlled using a package manager.
+Log into YouTube in Firefox. Ensure there is a `~/.mozilla/firefox/[something].default-release/` directory. This should be the default save location for the cookies file when Firefox is installed using a package manager.
 
 ## Usage
 
@@ -101,8 +106,8 @@ Planned before 1.0 release:
 * Audio only playback
 * Like/dislike videos
 * Sub/unsub from channels
-* Wayland support
-* Config file
+* Wayland support - Partially done, (for now use a terminal which support kitty image protocol and use [Ueberzugpp](https://github.com/jstkdng/ueberzugpp), with config set to "kitty")
+* Config file - Done
 * Options menu
 * Many bug fixes
 * Better error handling
@@ -118,7 +123,7 @@ Organised into varying degrees of likelyhood:
 * View/interact with comments
 * Change order of videos in playlist
 * CLI mode - use functionality in other scripts
-* Video downloading TUI (frontend for yt-dlp)
+* Video downloading TUI (frontend for yt-dlp) - Cancelled, moving this to a seperate project
 * Video queue
 * Text-only mode (no thumbnails, designed for ssh or console operation, can manage videos without playing them or displaying thumbnails)
 
