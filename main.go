@@ -178,6 +178,10 @@ func batchAdd(filename string, playlistID string, start int) {
 	if err != nil {
 		panic(err)
 	}
+
+	if strings.Contains(playlistID, "https://www.youtube.com") {
+		playlistID = strings.Split(playlistID, "=")[1]
+	}
 	
 	var fileContents string = strings.TrimSuffix(string(dat), "\n")
 	videoIDs := strings.Split(fileContents, "\n");
@@ -216,8 +220,11 @@ func main() {
 	if len(os.Args) > 1 && os.Args[1] == "--fork" {
 		fork(os.Args[2:])
 		return
-	} else if len(os.Args) == 5 && os.Args[1] == "--add" {
-		start, _ := strconv.Atoi(os.Args[4])
+	} else if (len(os.Args) == 4 || len(os.Args) == 5) && os.Args[1] == "--add" {
+		var start int = 0
+		if len(os.Args) == 5 {
+			start, _ = strconv.Atoi(os.Args[4])
+		}
 		batchAdd(os.Args[2], os.Args[3], start)
 		return
 	}
