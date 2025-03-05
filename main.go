@@ -281,6 +281,13 @@ func main() {
 				}
 				continue
 			}
+		case "-pa":
+			i++
+			if initialState == 0 {
+				initialState = youtube.GET_LIBRARY
+				initialData[0] = "includeHidden"
+				continue
+			}
 		case "--search":
 			i++
 			if initialState == 0 {
