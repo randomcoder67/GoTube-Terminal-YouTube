@@ -369,23 +369,37 @@ type LibraryJSON struct {
 			Tabs []struct {
 				TabRenderer struct {
 					Content struct {
-						SectionListRenderer struct {
+						RichGridRenderer struct {
 							Contents []struct {
-								ItemSectionRenderer struct {
-									Contents []struct {
-										ShelfRenderer struct {
+								RichSectionRenderer struct {
+									Content struct {
+										RichShelfRenderer struct {
+											Subtitle struct {
+												Runs []struct {
+													Text string `json:"text"`
+												} `json:"runs"`
+											} `json:"subtitle"`
+											
 											Title struct {
 												Runs []struct {
 													Text string `json:"text"`
 												} `json:"runs"`
-											} `json:"title,omitempty"`
-											TitleAnnotation struct {
-												SimpleText string `json:"simpleText"`
-											} `json:"titleAnnotation"`
-											Content struct {
-												HorizontalListRenderer struct {
-													Items []struct {
+											} `json:"title"`
+											
+											Contents []struct {
+												RichItemRenderer struct {
+													Content struct {
+
+														VideoRenderer struct {
+															Thumbnail struct {
+																Thumbnails []struct {
+																	URL string `json:"url"`
+																} `json:"thumbnails"`
+															} `json:"thumbnail"`
+														} `json:"videoRenderer"`
+													
 														LockupViewModel struct {
+														
 															ContentImage struct {
 																CollectionThumbnailViewModel struct {
 																	PrimaryThumbnail struct {
@@ -408,11 +422,74 @@ type LibraryJSON struct {
 																	} `json:"primaryThumbnail"`
 																} `json:"collectionThumbnailViewModel"`
 															} `json:"contentImage"`
+																					
 															Metadata struct {
 																LockupMetadataViewModel struct {
+																
 																	Title struct {
 																		Content string `json:"content"`
 																	} `json:"title"`
+
+																	Metadata struct {
+																		ContentMetadataViewModel struct {
+																			MetadataRows []struct {
+																				MetadataParts []struct {
+																					Text struct {
+																						CommandRuns []struct {
+																							OnTap struct {
+																								InnertubeCommand struct {
+																									CommandMetadata struct {
+																										WebCommandMetadata struct {
+																											URL string `json:"url"`
+																										} `json:"webCommandMetadata"`
+																									} `json:"commandMetadata"`
+																								} `json:"innertubeCommand"`
+																							} `json:"onTap"`
+
+
+																						} `json:"commandRuns"`
+																						Content string `json:"content"`
+																					} `json:"text"`
+																				} `json:"metadataParts"`
+																			} `json:"metadataRows"`
+																		} `json:"contentMetadataViewModel"`
+																	} `json:"metadata"`
+																	
+																} `json:"lockupMetadataViewModel"`
+															} `json:"metadata"`
+														} `json:"lockupViewModel"`
+														
+													} `json:"content"`
+												} `json:"richItemRenderer"`
+											} `json:"contents"`
+										} `json:"richShelfRenderer"`
+									} `json:"content"`
+								} `json:"richSectionRenderer"`
+							} `json:"contents"`
+						} `json:"richGridRenderer"`
+					} `json:"content"`
+				} `json:"tabRenderer"`
+			} `json:"tabs"`
+		} `json:"twoColumnBrowseResultsRenderer"`
+	} `json:"contents"`
+}
+/*
+											Title struct {
+												Runs []struct {
+													Text string `json:"text"`
+												} `json:"runs"`
+											} `json:"title,omitempty"`
+											TitleAnnotation struct {
+												SimpleText string `json:"simpleText"`
+											} `json:"titleAnnotation"`
+											Content struct {
+												HorizontalListRenderer struct {
+													Items []struct {
+												RichItemRenderer struct {
+													Content struct {
+														LockupViewModel struct {
+															
+															
 																	Metadata struct {
 																		ContentMetadataViewModel struct {
 																			MetadataRows []struct {
@@ -561,22 +638,23 @@ type LibraryJSON struct {
 																	} `json:"navigationEndpoint"`
 																} `json:"runs"`
 															} `json:"viewPlaylistText"`
-														} `json:"gridPlaylistRenderer,omitempty"`
+														} `json:"richItemRenderer,omitempty"`
 														
 													} `json:"items"`
-												} `json:"horizontalListRenderer,omitempty"`
+												} `json:"richShelfRenderer,omitempty"`
 											} `json:"content"`
-										} `json:"shelfRenderer,omitempty"`
+										} `json:"richSectionRenderer,omitempty"`
 									} `json:"contents"`
-								} `json:"itemSectionRenderer,omitempty"`
+								} `json:"richItemRenderer,omitempty"`
 							} `json:"contents"`
-						} `json:"sectionListRenderer"`
+						} `json:"richGridRenderer"`
 					} `json:"content"`
 				} `json:"tabRenderer"`
 			} `json:"tabs"`
 		} `json:"twoColumnBrowseResultsRenderer"`
 	} `json:"contents"`
 }
+*/
 
 type SearchJSON struct {
 	Contents struct {

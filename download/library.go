@@ -44,11 +44,10 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	playlists := []youtube.Video{}
 	
 	contents := jsonA.Contents.TwoColumnBrowseResultsRenderer.Tabs[0]
-	contentsB := contents.TabRenderer.Content.SectionListRenderer.Contents
-	contentsA := contentsB[1].ItemSectionRenderer.Contents[0].ShelfRenderer.Content.HorizontalListRenderer.Items
+	contentsB := contents.TabRenderer.Content.RichGridRenderer.Contents
+	contentsA := contentsB[1].RichSectionRenderer.Content.RichShelfRenderer.Contents
 	
 	
-
 	var doneChan chan int = make(chan int)
 	var err error
 	_ = err
@@ -56,14 +55,13 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	var numberOfThumbnails int = 0
 	
 	
-
-	watchLater := contentsB[2].ItemSectionRenderer.Contents[0].ShelfRenderer
+	watchLater := contentsB[2].RichSectionRenderer.Content.RichShelfRenderer
 	
 	// Don't add Watch Later if it's disabled in config
 	if includeHidden || !config.ActiveConfig.HideWatchLater {
 		if watchLater.Title.Runs[0].Text == "Watch Later" {
 	
-			numVideos, err := strconv.Atoi(watchLater.TitleAnnotation.SimpleText)
+			numVideos, err := strconv.Atoi(watchLater.Subtitle.Runs[0].Text)
 			if err != nil {
 				panic(err)
 			}
@@ -83,7 +81,7 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 				Channel:       "Unknown",
 				Visibility:    "Private",
 				Id:            "WL",
-				ThumbnailLink: watchLater.Content.HorizontalListRenderer.Items[0].GridVideoRenderer.Thumbnail.Thumbnails[0].URL,
+				ThumbnailLink: watchLater.Contents[0].RichItemRenderer.Content.VideoRenderer.Thumbnail.Thumbnails[3].URL,
 				ThumbnailFile: thumbnailFile,
 				Type:          youtube.OTHER_PLAYLIST,
 			}
@@ -98,7 +96,7 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	
 	for _, x := range contentsA {
 
-		playlistJSON := x.LockupViewModel
+		playlistJSON := x.RichItemRenderer.Content.LockupViewModel
 		if playlistJSON.Metadata.LockupMetadataViewModel.Title.Content != "" {
 
 			// Title
