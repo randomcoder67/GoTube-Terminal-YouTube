@@ -184,7 +184,7 @@ func copyToClipboard(textToCopy string) {
 	if config.ActiveConfig.SessionType == "wayland" {
 		cmd = exec.Command("wl-copy")
 	} else {
-		cmd = exec.Command("xclip", "-selection", "c", "-i")
+		cmd = exec.Command("xsel", "--clipboard", "--input")
 	}
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
