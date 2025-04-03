@@ -82,6 +82,12 @@ func (gridOnly *GridOnly) removeImgs() {
 func (gridOnly *GridOnly) handleResize(redrawImages bool, renderCursor bool) {
 	gridOnly.removeImgs()
 	gridOnly.calcSizing()
+	if curPageInfo.GridInfo.W < 1 || curPageInfo.GridInfo.H < 1 {
+		gridOnly.Screen.Clear()
+		drawText(gridOnly.Screen, 1, 0, 10, 0, styles["white"], "Too Small")
+		gridOnly.Screen.Sync()
+		return
+	}
 	gridOnly.recalibrate()
 	gridOnly.redraw(redrawImages, renderCursor)
 }
