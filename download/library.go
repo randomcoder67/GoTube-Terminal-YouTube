@@ -20,12 +20,13 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	var jsonText string
 	var count int = 0
 	for {
-		var fullHTML string = network.GetHTML("https://www.youtube.com/feed/library", true)
+		var fullHTML string = network.GetHTML("https://www.youtube.com/feed/playlists", true)
 		config.FileDump("LibraryRaw.html", fullHTML, false)
 		jsonText = network.ExtractJSON(fullHTML, false)
-		if strings.Contains(jsonText, "\"runs\":[{\"text\":\"Playlists\"}]") {
-			break
-		}
+		break
+		//if strings.Contains(jsonText, "\"runs\":[{\"text\":\"Playlists\"}]") {
+		//	break
+		//}
 		count++
 		config.LogWarning(fmt.Sprintf("Retrying GetLibrary (count: %d)", count))
 	}
@@ -45,7 +46,7 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	
 	contents := jsonA.Contents.TwoColumnBrowseResultsRenderer.Tabs[0]
 	contentsB := contents.TabRenderer.Content.RichGridRenderer.Contents
-	contentsA := contentsB[1].RichSectionRenderer.Content.RichShelfRenderer.Contents
+	//contentsA := contentsB[1].RichSectionRenderer.Content.RichShelfRenderer.Contents
 	
 	
 	var doneChan chan int = make(chan int)
@@ -54,7 +55,7 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 	var number int = 0
 	var numberOfThumbnails int = 0
 	
-	
+	/*
 	watchLater := contentsB[2].RichSectionRenderer.Content.RichShelfRenderer
 	
 	// Don't add Watch Later if it's disabled in config
@@ -92,9 +93,9 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 			playlists = append(playlists, playlist)
 		}
 	}
-
+	*/
 	
-	for _, x := range contentsA {
+	for _, x := range contentsB {
 
 		playlistJSON := x.RichItemRenderer.Content.LockupViewModel
 		if playlistJSON.Metadata.LockupMetadataViewModel.Title.Content != "" {
@@ -187,13 +188,15 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 			// Thumbnail File Name
 
 			var thumbnailFile string
-			if numVideos > 0 {
+			var downloadThumbnail bool
+			if thumbnailLink == "https://i.ytimg.com/img/no_thumbnail.jpg" {
+				thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
+				downloadThumbnail = false
+			} else {
 				thumbnailFile = youtube.HOME_DIR + ThumbnailDir + strconv.Itoa(number) + ".png"
 				numberOfThumbnails++
-			} else {
-				thumbnailFile = youtube.HOME_DIR + youtube.DATA_FOLDER + "thumbnails/emptyPlaylist.jpg"
+				downloadThumbnail = true
 			}
-
 
 			number++
 
@@ -210,7 +213,7 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 				Type:          typeA,
 			}
 			playlists = append(playlists, playlist)
-			if numVideos > 0 && config.ActiveConfig.Thumbnails {
+			if downloadThumbnail && config.ActiveConfig.Thumbnails {
 				go network.DownloadThumbnail(playlist.ThumbnailLink, playlist.ThumbnailFile, false, doneChan, false)
 			}
 		}
@@ -220,13 +223,23 @@ func GetLibrary(includeHidden bool) youtube.VideoHolder {
 			_ = <-doneChan
 		}
 	}
+
+	var watchLater youtube.Video
+	var otherVideo youtube.Video = playlists[0]
+	for i, playlistA := range playlists {
+		if playlistA.Title == "Watch Later" {
+			watchLater = playlists[i]
+			playlists[i] = otherVideo
+			playlists[0] = watchLater
+			break
+		}
+	}
 	
 	holder := youtube.VideoHolder{
 		Videos:            playlists,
 		PageType:          youtube.LIBRARY,
 		ContinuationToken: "",
 	}
-	
 
 	return holder
 }
