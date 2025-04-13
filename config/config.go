@@ -9,23 +9,25 @@ import (
 )
 
 type ConfigOpts struct {
-	Log            bool   // Whether to write all events to the log (errors are always written)
-	DumpJSON       bool   // Whether to dump recieved and processed data to files
-	SessionType    string // X11 or Wayland, needed for copying
-	PID            int
-	Term           string // The current $TERM environmental variable (i.e. the terminal you are currently using)
-	BrowserEnv     string // The current $BROWSER environmental variable
-	BrowserCookies string // The current $BROWSER environmental variable
-	Thumbnails     bool // Option to disable thumbnails for bad internet connections
-	HideWatchLater  bool // Whether to hide Watch Later from playlists view
-	HideLikedVideos bool // Whether to hide Liked Videos from playlists view
-	PlaylistsToHide []string // Other playlists to hide (by name)
+	Log                       bool   // Whether to write all events to the log (errors are always written)
+	DumpJSON                  bool   // Whether to dump recieved and processed data to files
+	SessionType               string // X11 or Wayland, needed for copying
+	PID                       int
+	Term                      string // The current $TERM environmental variable (i.e. the terminal you are currently using)
+	BrowserEnv                string // The current $BROWSER environmental variable
+	BrowserCookies            string // The current $BROWSER environmental variable
+	Thumbnails                bool // Option to disable thumbnails for bad internet connections
+	HideWatchLater            bool // Whether to hide Watch Later from playlists view
+	HideLikedVideos           bool // Whether to hide Liked Videos from playlists view
+	PlaylistsToHide           []string // Other playlists to hide (by name)
+	HideWatchLaterInAddToMenu bool // Whether to hide Watch Later in the add to playlist menu
 }
 
 type ConfigFile struct {
-	HideWatchLater  bool `json:"hideWatchLater"`
-	HideLikedVideos bool `json:"hideLikedVideos"`
-	PlaylistsToHide []string `json:"playlistsToHide"`
+	HideWatchLater            bool `json:"hideWatchLater"`
+	HideLikedVideos           bool `json:"hideLikedVideos"`
+	PlaylistsToHide           []string `json:"playlistsToHide"`
+	HideWatchLaterInAddToMenu bool `json:"hideWatchLaterInAddToMenu"`
 }
 
 var ActiveConfig ConfigOpts
@@ -67,6 +69,7 @@ func InitConfig(log bool, dumpJSON bool, thumbnails bool, browserCookies string)
 		HideWatchLater: configFile.HideWatchLater,
 		HideLikedVideos: configFile.HideLikedVideos,
 		PlaylistsToHide: configFile.PlaylistsToHide,
+		HideWatchLaterInAddToMenu: configFile.HideWatchLaterInAddToMenu,
 	}
 
 	fmt.Fprintf(logFileD, "Config Options: %+v\n", ActiveConfig)

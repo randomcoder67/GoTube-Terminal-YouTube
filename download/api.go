@@ -400,12 +400,25 @@ func GetAddToPlaylist(videoID string) (map[string]string, []string) {
 		playlistsSlice = append(playlistsSlice, playlistName)
 		playlistsMap[playlistName] = info.PlaylistID
 	}
-	
-	// Watch later should always be first on the list, then all the other playlist in order of most recently added to. Sometimes Watch later will be the second in the list, this code fixes that
-	if len(playlistsSlice) > 1 && playlistsSlice[1] == "Watch later" {
-		temp := playlistsSlice[0]
-		playlistsSlice[0] = playlistsSlice[1]
-		playlistsSlice[1] = temp
+
+	if config.ActiveConfig.HideWatchLaterInAddToMenu {
+		var start_index int = 0
+		var end_index int = 0
+		for i, x := range playlistsSlice {
+			if x == "Watch later" {
+				start_index = i
+				end_index = i + 1
+				break
+			}
+		}
+		playlistsSlice = append(playlistsSlice[:start_index], playlistsSlice[end_index:]...)
+	} else {
+		// Watch later should always be first on the list, then all the other playlist in order of most recently added to. Sometimes Watch later will be the second in the list, this code fixes that
+		if len(playlistsSlice) > 1 && playlistsSlice[1] == "Watch later" {
+			temp := playlistsSlice[0]
+			playlistsSlice[0] = playlistsSlice[1]
+			playlistsSlice[1] = temp
+		}
 	}
 	
 	return playlistsMap, playlistsSlice
