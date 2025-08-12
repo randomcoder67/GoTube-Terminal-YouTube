@@ -106,7 +106,7 @@ func GetSearch(searchTerm string) youtube.VideoHolder {
 					zz := z[0].ThumbnailBadgeViewModel.Icon.Sources
 					if len(zz) == 1 {
 						if zz[0].ClientResource.ImageName == "PLAYLISTS" {
-							num, err := strconv.Atoi(strings.ReplaceAll(strings.ReplaceAll(z[0].ThumbnailBadgeViewModel.Text, " videos", ""), " video", ""))
+							num, err := strconv.Atoi(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(z[0].ThumbnailBadgeViewModel.Text, " videos", ""), " video", ""), ",", ""))
 							if err != nil {
 								panic(err)
 							}

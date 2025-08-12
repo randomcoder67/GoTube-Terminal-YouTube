@@ -132,7 +132,7 @@ func GetPlaylist(playlistId string, playlistName string) youtube.VideoHolder {
 	
 	var continuationToken string = ""
 	if len(contentsA) > 0 {
-		continuationToken = contentsA[len(contentsA)-1].ContinuationItemRenderer.ContinuationEndpoint.ContinuationCommand.Token
+		continuationToken = contentsA[len(contentsA)-1].ContinuationItemRenderer.ContinuationEndpoint.CommandExecutorCommand.Commands[1].ContinuationCommand.Token
 	}
 
 	videoHolder := youtube.VideoHolder{

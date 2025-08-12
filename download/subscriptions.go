@@ -73,6 +73,11 @@ func GetSubscriptions() youtube.VideoHolder {
 				length = videoJSON.LengthText.SimpleText
 			}
 
+			var thumbnailLink string = ""
+			if len(videoJSON.Thumbnail.Thumbnails) > 0 {
+				thumbnailLink = videoJSON.Thumbnail.Thumbnails[len(videoJSON.Thumbnail.Thumbnails)-1].URL
+			}
+
 			number++
 			_ = views
 			// Put it all together
@@ -85,7 +90,7 @@ func GetSubscriptions() youtube.VideoHolder {
 				Id:            videoJSON.VideoID,
 				Channel:       videoJSON.OwnerText.Runs[0].Text,
 				ChannelID:     videoJSON.OwnerText.Runs[0].NavigationEndpoint.CommandMetadata.WebCommandMetadata.URL,
-				ThumbnailLink: videoJSON.Thumbnail.Thumbnails[2].URL,
+				ThumbnailLink: thumbnailLink,
 				ThumbnailFile: youtube.HOME_DIR + ThumbnailDir + strconv.Itoa(number) + ".png",
 				DirectLink:    "",
 				StartTime:     videoJSON.NavigationEndpoint.WatchEndpoint.StartTimeSeconds,

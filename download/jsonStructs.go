@@ -277,9 +277,13 @@ type WLJSON struct {
 											Contents []struct {
 												ContinuationItemRenderer struct {
 													ContinuationEndpoint struct {
-														ContinuationCommand struct {
-															Token string `json:"token"`
-														} `json:"continuationCommand"`
+														CommandExecutorCommand struct {
+															Commands []struct {
+																ContinuationCommand struct {
+																	Token string `json:"token"`
+																} `json:"continuationCommand"`
+															} `json:"commands"`
+														} `json:"commandExecutorCommand"`
 													} `json:"continuationEndpoint"`
 												} `json:"continuationItemRenderer"`
 												PlaylistVideoRenderer struct {
